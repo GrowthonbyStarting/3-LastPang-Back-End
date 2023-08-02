@@ -17,20 +17,20 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/profile")
+@RequestMapping("/api/profile/")
 public class ProfileController {
     private final ProfileService profileService;
 //    private final AwsS3Service awsS3Service;
 //    private final ImageService imageService;
 
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getProfileList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<Profile> profileList = profileService.getProfileList(principalDetails);
         return ResponseEntity.status(HttpStatus.OK).body(profileList);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> createProfile(ProfileDto profileDto) {
 //        List<Image> imageList = awsS3Service.uploadFileList(profileDto.getImages(), "profile");
 //        imageService.saveImage(imageList);
@@ -39,7 +39,7 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body("프로필 생성 성공");
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<?> updateProfile(ProfileDto profileDto) {
 //        List<Image> imageList = awsS3Service.uploadFileList(profileDto.getImages(), "profile");
 //        imageService.saveImage(imageList);
