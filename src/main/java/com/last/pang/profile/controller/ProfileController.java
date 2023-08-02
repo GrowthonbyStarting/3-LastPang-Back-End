@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/profile")
+@RequestMapping("/api/profile")
 public class ProfileController {
     private final ProfileService profileService;
 //    private final AwsS3Service awsS3Service;
