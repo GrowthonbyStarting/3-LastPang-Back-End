@@ -1,6 +1,6 @@
 package com.last.pang.user.controller;
 
-import com.last.pang.common.aws.AwsS3;
+import com.last.pang.common.file.entity.Image;
 import com.last.pang.user.dto.ProfileImageDto;
 import com.last.pang.user.dto.UserDto;
 import com.last.pang.user.service.UserService;
@@ -40,7 +40,7 @@ public class UserController {
     @PutMapping(value = "/profile/image")
     public ResponseEntity<?> updateProfileImage(
             Authentication authentication, ProfileImageDto dto) throws IOException {
-        AwsS3 result = userService.updateProfileImage(authentication, dto);
+        Image result = userService.updateProfileImage(authentication, dto);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

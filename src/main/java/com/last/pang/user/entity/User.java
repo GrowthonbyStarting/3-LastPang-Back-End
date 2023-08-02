@@ -1,8 +1,7 @@
 package com.last.pang.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.last.pang.common.BaseTimeEntity;
-import com.last.pang.common.aws.AwsS3;
+import com.last.pang.profile.entity.Profile;
 import com.last.pang.user.dto.UserDto;
 import lombok.*;
 
@@ -31,14 +30,20 @@ public class User extends BaseTimeEntity {
 
     private String password;
 
-    private String profileImageUrl;
-    private String profileImageKey;
 
     @Column(unique = true)
     private String email;
 
+    private Purpose purpose;
+    private Name name;
     private LocalDate birthday;
+    @Enumerated(EnumType.STRING)
+    private AgeGroup ageGroup;
+    @Enumerated(EnumType.STRING)
+    private JobGroup jobGroup;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
+    private List<Profile> profileList;
 
     public void update(UserDto dto, String encPassword) {
         this.nickname = dto.getNickname();
@@ -47,8 +52,4 @@ public class User extends BaseTimeEntity {
         this.password = encPassword;
     }
 
-    public void updateProfileImageUrl(AwsS3 awsS3) {
-        this.profileImageUrl = awsS3.getPath();
-        this.profileImageKey = awsS3.getKey();
-    }
 }

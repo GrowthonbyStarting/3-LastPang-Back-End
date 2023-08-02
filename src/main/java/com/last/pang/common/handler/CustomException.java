@@ -1,4 +1,4 @@
-package com.last.pang.handler;
+package com.last.pang.common.handler;
 
 public class CustomException extends RuntimeException {
     private static final long serialVersionUID = 1L;

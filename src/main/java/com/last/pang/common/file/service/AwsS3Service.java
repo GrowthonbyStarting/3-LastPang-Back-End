@@ -1,9 +1,10 @@
-package com.last.pang.common.aws;
+package com.last.pang.common.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.last.pang.common.file.entity.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,20 +27,34 @@ public class AwsS3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public AwsS3 upload(MultipartFile multipartFile, String dirName) throws IOException {
-        File file = convertMultipartFileToFile(multipartFile);
+    public List<Image> uploadFileList(List<MultipartFile> multipartFile, String dirName) {
+        List<Image> imageList = new ArrayList<>();
+        multipartFile.forEach(file -> {
+            Image image = upload(file, dirName);
+            imageList.add(image);
+        });
+        return imageList;
+    }
+
+    public Image upload(MultipartFile multipartFile, String dirName) {
+        File file = null;
+        try {
+            file = convertMultipartFileToFile(multipartFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return upload(file, dirName);
     }
 
-    private AwsS3 upload(File file, String dirName) {
+    private Image upload(File file, String dirName) {
         String key = randomFileName(file, dirName);
         String path = putS3(file, key);
         removeFile(file);
 
-        return AwsS3
+        return Image
                 .builder()
-                .key(key)
-                .path(path)
+                .fileKey(key)
+                .filePath(path)
                 .build();
     }
 
@@ -67,10 +83,20 @@ public class AwsS3Service {
         }
         return file;
     }
-    public void remove(AwsS3 awsS3) {
-        if (!amazonS3.doesObjectExist(bucket, awsS3.getKey())) {
-            throw new AmazonS3Exception("Object " + awsS3.getKey() + " does not exist!");
+
+    public void remove(Image image) {
+        if (!amazonS3.doesObjectExist(bucket, image.getFileKey())) {
+            throw new AmazonS3Exception("Object " + image.getFileKey() + " does not exist!");
         }
-        amazonS3.deleteObject(bucket, awsS3.getKey());
+        amazonS3.deleteObject(bucket, image.getFileKey());
+    }
+
+    public void removeImageList(List<Image> imageList) {
+        imageList.forEach(image -> {
+            if (!amazonS3.doesObjectExist(bucket, image.getFileKey())) {
+                throw new AmazonS3Exception("Object " + image.getFileKey() + " does not exist!");
+            }
+            amazonS3.deleteObject(bucket, image.getFileKey());
+        });
     }
 }

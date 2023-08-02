@@ -14,22 +14,20 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    private final CorsConfig corsConfig;
-    private final CustomDsl customDsl;
-
     @Bean
     SecurityFilterChain config(HttpSecurity http) throws Exception {
         return http
-                .addFilter(corsConfig.corsFilter())
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .apply(customDsl)
-                .and()
-                .authorizeRequests(authorize -> authorize
-                        .anyRequest().permitAll())
-                .build();
+                .authorizeRequests(authorize -> {
+                    try {
+                        authorize
+                                .antMatchers("/api/**").authenticated()
+                                .anyRequest().permitAll()
+                                .and()
+                                .formLogin().loginPage("/auth/signin").loginProcessingUrl("/auth/signin").defaultSuccessUrl("/");
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }).build();
     }
 }

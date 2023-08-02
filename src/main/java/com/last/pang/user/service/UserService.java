@@ -1,7 +1,7 @@
 package com.last.pang.user.service;
 
-import com.last.pang.common.aws.AwsS3;
-import com.last.pang.common.aws.AwsS3Service;
+import com.last.pang.common.file.entity.Image;
+import com.last.pang.common.file.service.AwsS3Service;
 import com.last.pang.config.security.PrincipalDetails;
 import com.last.pang.user.dto.ProfileImageDto;
 import com.last.pang.user.dto.UserDto;
@@ -55,23 +55,12 @@ public class UserService {
     }
 
     @Transactional
-    public AwsS3 updateProfileImage(Authentication authentication, ProfileImageDto dto) throws IOException {
+    public Image updateProfileImage(Authentication authentication, ProfileImageDto dto) throws IOException {
         User loginUser = ((PrincipalDetails) authentication.getPrincipal()).getUser();
-        validateOwner(loginUser.getId(), dto.getUserId());
-        AwsS3 uploadResult = awsS3Service.upload(dto.getProfileImage(), "profile");
-        loginUser.updateProfileImageUrl(uploadResult);
+        Image uploadResult = awsS3Service.upload(dto.getProfileImage(), "profile");
         userRepository.save(loginUser);
         return uploadResult;
     }
 
-    public void validateOwner(Long loginUserId, Long profileId) {
-        if (!isProfileOwner(loginUserId, profileId)) {
-            throw new IllegalArgumentException("로그인한 유저와 프로필을 변경하려는 유저가 일치하지 않습니다." +
-                    " (로그인한 유저: " + loginUserId + ", 프로필 변경하려는 유저: " + profileId + " )");
-        }
-    }
-    public boolean isProfileOwner(Long loginUserId, Long profileId) {
-        return Objects.equals(loginUserId, profileId);
-    }
 
 }
