@@ -24,13 +24,13 @@ public class ProfileController {
 //    private final ImageService imageService;
 
 
-    @GetMapping
+    @GetMapping("/get-all")
     public ResponseEntity<?> getProfileList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<Profile> profileList = profileService.getProfileList(principalDetails);
         return ResponseEntity.status(HttpStatus.OK).body(profileList);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createProfile(ProfileDto profileDto) {
 //        List<Image> imageList = awsS3Service.uploadFileList(profileDto.getImages(), "profile");
 //        imageService.saveImage(imageList);
@@ -39,7 +39,7 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body("프로필 생성 성공");
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<?> updateProfile(ProfileDto profileDto) {
 //        List<Image> imageList = awsS3Service.uploadFileList(profileDto.getImages(), "profile");
 //        imageService.saveImage(imageList);
@@ -47,7 +47,7 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body("프로필 수정 성공");
     }
 
-    @DeleteMapping("/{profileId}")
+    @DeleteMapping("/delete/{profileId}")
     public ResponseEntity<?> deleteProfile(@PathVariable Long profileId) {
         List<Image> imageList = profileService.deleteProfile(profileId);
 //        awsS3Service.removeImageList(imageList);
