@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .authorizeRequests(authorize -> {
                     try {
                         authorize
-                                .antMatchers("/api/**").authenticated()
+//                                .antMatchers("/api/**").authenticated()
                                 .anyRequest().permitAll()
                                 .and()
                                 .formLogin().loginPage("/auth/signin").loginProcessingUrl("/auth/signin").defaultSuccessUrl("/");
