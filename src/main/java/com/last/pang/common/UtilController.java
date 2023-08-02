@@ -21,6 +21,7 @@ public class UtilController {
                 .username("test")
                 .password("1234")
                 .email("asdf")
+                .nickname("test")
                 .build();
         userRepository.save(user);
     }

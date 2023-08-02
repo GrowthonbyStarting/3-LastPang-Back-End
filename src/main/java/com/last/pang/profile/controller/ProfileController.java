@@ -54,4 +54,5 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.OK).body("프로필 삭제 성공");
     }
 
+
 }
